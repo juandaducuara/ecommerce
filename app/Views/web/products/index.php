@@ -2,9 +2,20 @@
 
 <?= $this->section('content') ?>
 
+<!-- Toggle filtros móvil -->
+<div class="lg:hidden mb-4">
+    <button onclick="document.getElementById('filters-panel').classList.toggle('hidden')"
+            class="flex items-center justify-center gap-2 w-full bg-white border rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+        </svg>
+        Filtros y ordenar
+    </button>
+</div>
+
 <div class="flex flex-col lg:flex-row gap-6">
     <!-- Sidebar filtros -->
-    <aside class="lg:w-64 shrink-0">
+    <aside id="filters-panel" class="hidden lg:block lg:w-64 shrink-0">
         <form action="/products" method="GET" class="space-y-6">
             <?php if ($search): ?>
                 <input type="hidden" name="q" value="<?= esc($search) ?>">

@@ -35,7 +35,7 @@
             <a href="/categories/<?= esc($cat->slug) ?>"
                 class="bg-white rounded-xl border p-4 text-center hover:shadow-md hover:border-indigo-300 transition">
                 <?php if ($cat->icon): ?>
-                    <span class="text-2xl mb-2 block"><?= $cat->icon ?></span>
+                    <i class="bi <?= esc($cat->icon) ?> text-2xl text-indigo-500 mb-2 block"></i>
                 <?php endif; ?>
                 <span class="text-sm font-medium text-gray-800"><?= esc($cat->name) ?></span>
             </a>

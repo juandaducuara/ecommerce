@@ -38,25 +38,29 @@ class OrderItemModel extends Model
     // Crear items desde carrito
     public function createFromCart(int $orderId, array $cartItems): bool
     {
+        $rows = [];
+
         foreach ($cartItems as $item) {
             $productData = is_string($item->product_data)
                 ? json_decode($item->product_data, true)
-                : $item->product_data;
+                : (array) $item->product_data;
 
-            $this->insert([
-                'order_id'     => $orderId,
-                'product_id'   => $item->product_id,
-                'sku'          => $productData['sku'] ?? '',
-                'name'         => $productData['name'] ?? '',
-                'quantity'     => $item->quantity,
-                'unit_price'   => $item->unit_price,
-                'total_price'  => $item->total_price,
+            $rows[] = [
+                'order_id'     => (int) $orderId,
+                'product_id'   => (int) $item->product_id,
+                'sku'          => (string) ($productData['sku'] ?? ''),
+                'name'         => (string) ($productData['name'] ?? ''),
+                'quantity'     => (int) $item->quantity,
+                'unit_price'   => (float) $item->unit_price,
+                'total_price'  => (float) $item->total_price,
+                'tax'          => 0.00,
+                'discount'     => 0.00,
                 'product_data' => is_string($item->product_data)
                     ? $item->product_data
                     : json_encode($item->product_data),
-            ]);
+            ];
         }
 
-        return true;
+        return $this->insertBatch($rows) !== false;
     }
 }

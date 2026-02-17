@@ -83,20 +83,84 @@
             <p class="text-gray-600 mb-6"><?= esc($product->short_description) ?></p>
         <?php endif; ?>
 
-        <!-- Agregar al carrito (placeholder) -->
+        <!-- Agregar al carrito -->
         <div class="flex items-center gap-4 mb-6">
             <div class="flex items-center border rounded-lg">
-                <button type="button" onclick="this.nextElementSibling.stepDown()" class="px-3 py-2 text-gray-600 hover:bg-gray-100">-</button>
-                <input type="number" value="1" min="1" max="<?= $product->stock_available ?>"
+                <button type="button" id="qty-down" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">−</button>
+                <input type="number" value="1" min="1" max="<?= $product->stock_available > 0 ? $product->stock_available : 1 ?>"
                     class="w-16 text-center border-x py-2 focus:outline-none" id="quantity">
-                <button type="button" onclick="this.previousElementSibling.stepUp()" class="px-3 py-2 text-gray-600 hover:bg-gray-100">+</button>
+                <button type="button" id="qty-up" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
             </div>
-            <button class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition
-                <?= $product->stock_available <= 0 ? 'opacity-50 cursor-not-allowed' : '' ?>"
+            <button id="add-to-cart"
+                data-product="<?= $product->id ?>"
+                class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition
+                    <?= $product->stock_available <= 0 ? 'opacity-50 cursor-not-allowed' : '' ?>"
                 <?= $product->stock_available <= 0 ? 'disabled' : '' ?>>
                 <?= $product->stock_available > 0 ? 'Agregar al carrito' : 'Agotado' ?>
             </button>
         </div>
+
+        <!-- Toast feedback -->
+        <div id="cart-toast" class="hidden text-sm font-medium py-2 px-3 rounded-lg mb-2"></div>
+
+        <script>
+        const csrfToken = '<?= csrf_token() ?>';
+        const csrfHash  = '<?= csrf_hash() ?>';
+
+        document.getElementById('qty-down')?.addEventListener('click', () => {
+            const q = document.getElementById('quantity');
+            if (parseInt(q.value) > 1) q.value = parseInt(q.value) - 1;
+        });
+        document.getElementById('qty-up')?.addEventListener('click', () => {
+            const q    = document.getElementById('quantity');
+            const max  = parseInt(q.max) || 9999;
+            if (parseInt(q.value) < max) q.value = parseInt(q.value) + 1;
+        });
+
+        document.getElementById('add-to-cart')?.addEventListener('click', function() {
+            const btn = this;
+            const qty = document.getElementById('quantity').value;
+            btn.disabled = true;
+            btn.textContent = 'Agregando…';
+
+            const body = new URLSearchParams({
+                product_id: btn.dataset.product,
+                quantity:   qty,
+                [csrfToken]: csrfHash,
+            });
+
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
+                body,
+            })
+            .then(r => r.json())
+            .then(data => {
+                const toast = document.getElementById('cart-toast');
+                toast.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+
+                if (data.success) {
+                    toast.classList.add('bg-green-100', 'text-green-800');
+                    toast.textContent = data.message;
+                    // Update cart badge in navbar
+                    document.querySelectorAll('.cart-count').forEach(el => {
+                        el.textContent = data.items_count;
+                        el.classList.remove('hidden');
+                    });
+                } else {
+                    toast.classList.add('bg-red-100', 'text-red-800');
+                    toast.textContent = data.message;
+                }
+
+                btn.textContent = '<?= $product->stock_available > 0 ? 'Agregar al carrito' : 'Agotado' ?>';
+                btn.disabled = false;
+            })
+            .catch(() => {
+                btn.textContent = 'Agregar al carrito';
+                btn.disabled = false;
+            });
+        });
+        </script>
 
         <!-- Detalles -->
         <div class="border-t pt-4 space-y-2 text-sm text-gray-600">

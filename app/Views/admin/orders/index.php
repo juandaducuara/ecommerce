@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/main') ?>
+<?= $this->extend('layouts/admin') ?>
 
 <?= $this->section('content') ?>
 
@@ -77,8 +77,8 @@
 </div>
 
 <!-- Tabla -->
-<div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-    <table class="w-full text-sm">
+<div class="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
+    <table class="w-full text-sm min-w-[700px]">
         <thead class="bg-gray-50 border-b">
             <tr>
                 <th class="text-left px-4 py-3 text-gray-600 font-medium">Pedido</th>

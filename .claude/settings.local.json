@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(for f in app/Views/admin/users/index.php app/Views/admin/users/create.php app/Views/admin/users/edit.php app/Views/admin/products/index.php app/Views/admin/products/create.php app/Views/admin/products/edit.php)",
+      "Bash(do sed -i \"s|layouts/main|layouts/admin|g\" \"$f\")",
+      "Bash(echo:*)",
+      "Bash(done)"
     ]
   }
 }

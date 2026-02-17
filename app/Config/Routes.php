@@ -26,9 +26,26 @@ $routes->get('products', 'Web\CatalogController::index');
 $routes->get('products/(:segment)', 'Web\CatalogController::show/$1');
 $routes->get('categories/(:segment)', 'Web\CatalogController::category/$1');
 
+// ─── Carrito (público, funciona con sesión) ───
+$routes->get('cart', 'Web\CartController::index');
+$routes->post('cart/add', 'Web\CartController::add');
+$routes->post('cart/update', 'Web\CartController::update');
+$routes->post('cart/remove', 'Web\CartController::remove');
+$routes->post('cart/coupon', 'Web\CartController::applyCoupon');
+$routes->post('cart/coupon/remove', 'Web\CartController::removeCoupon');
+
+// ─── Checkout (requiere autenticación) ───
+$routes->group('checkout', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('/', 'Web\CheckoutController::index');
+    $routes->post('/', 'Web\CheckoutController::process');
+    $routes->get('success/(:segment)', 'Web\CheckoutController::success/$1');
+});
+
 // ─── Account (usuarios autenticados) ───
 $routes->group('account', ['filter' => 'auth'], static function ($routes) {
     $routes->get('/', 'Web\AccountController::index');
+    $routes->get('orders', 'Web\OrderController::index');
+    $routes->get('orders/(:segment)', 'Web\OrderController::show/$1');
 });
 
 // ─── Admin ───
