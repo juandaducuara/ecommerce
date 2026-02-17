@@ -290,11 +290,11 @@ class ProductController extends BaseController
             $file->move(FCPATH . 'uploads/products', $newName);
 
             $this->imageModel->insert([
-                'product_id' => $productId,
+                'product_id' => (int) $productId,
                 'path'       => 'uploads/products/' . $newName,
                 'alt_text'   => $this->request->getPost('name'),
-                'position'   => $existingCount + $i,
-                'is_primary' => ($existingCount === 0 && $i === 0) ? 1 : 0,
+                'position'   => (int) ($existingCount + $i),
+                'is_primary' => (int) ($existingCount === 0 && $i === 0 ? 1 : 0),
             ]);
         }
     }

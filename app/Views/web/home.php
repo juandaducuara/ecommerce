@@ -18,7 +18,7 @@
     <form action="/products" method="GET" class="max-w-xl mx-auto">
         <div class="flex">
             <input type="text" name="q" placeholder="Buscar productos..."
-                class="flex-1 border border-gray-300 rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                class="flex-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
             <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-r-lg hover:bg-indigo-700 transition font-medium">
                 Buscar
             </button>
@@ -29,15 +29,15 @@
 <!-- Categorías -->
 <?php if (!empty($categories)): ?>
 <section class="mb-10">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Categorías</h2>
+    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Categorías</h2>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <?php foreach ($categories as $cat): ?>
             <a href="/categories/<?= esc($cat->slug) ?>"
-                class="bg-white rounded-xl border p-4 text-center hover:shadow-md hover:border-indigo-300 transition">
+                class="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 text-center hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 transition">
                 <?php if ($cat->icon): ?>
-                    <i class="bi <?= esc($cat->icon) ?> text-2xl text-indigo-500 mb-2 block"></i>
+                    <i class="bi <?= esc($cat->icon) ?> text-2xl text-indigo-500 dark:text-indigo-400 mb-2 block"></i>
                 <?php endif; ?>
-                <span class="text-sm font-medium text-gray-800"><?= esc($cat->name) ?></span>
+                <span class="text-sm font-medium text-gray-800 dark:text-gray-100"><?= esc($cat->name) ?></span>
             </a>
         <?php endforeach; ?>
     </div>
@@ -48,8 +48,8 @@
 <?php if (!empty($featured)): ?>
 <section class="mb-10">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800">Productos destacados</h2>
-        <a href="/products?sort=popular" class="text-sm text-indigo-600 hover:text-indigo-800">Ver todos</a>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Productos destacados</h2>
+        <a href="/products?sort=popular" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">Ver todos</a>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <?php foreach ($featured as $product): ?>
@@ -63,8 +63,8 @@
 <?php if (!empty($latest)): ?>
 <section class="mb-10">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800">Nuevos productos</h2>
-        <a href="/products" class="text-sm text-indigo-600 hover:text-indigo-800">Ver todos</a>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Nuevos productos</h2>
+        <a href="/products" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">Ver todos</a>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <?php foreach ($latest as $product): ?>

@@ -22,7 +22,7 @@ class ProductImageModel extends Model
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';
-    protected $updatedField  = false;
+    protected $updatedField  = '';
 
     // Obtener imágenes de un producto
     public function getByProduct(int $productId)

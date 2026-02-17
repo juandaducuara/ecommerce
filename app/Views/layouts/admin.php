@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= esc($title ?? 'Admin') ?> — Panel de Administración</title>
+    <!-- Anti-flicker: apply theme before first paint -->
+    <script>
+        (function(){
+            const t = localStorage.getItem('theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
 
 <!-- Overlay móvil -->
 <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden" onclick="closeSidebar()"></div>
 
 <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
+    <!-- Sidebar (already dark, no changes needed) -->
     <aside id="sidebar"
            class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-gray-100 flex flex-col
                   -translate-x-full transition-transform duration-200 ease-in-out
@@ -75,21 +85,33 @@
     <div class="flex-1 flex flex-col min-w-0">
 
         <!-- Topbar -->
-        <header class="bg-white border-b px-4 sm:px-6 py-3 flex items-center gap-3 sticky top-0 z-30">
+        <header class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center gap-3 sticky top-0 z-30">
             <!-- Hamburger (móvil) -->
-            <button onclick="openSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700 flex-shrink-0">
+            <button onclick="openSidebar()" class="lg:hidden text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex-shrink-0">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
 
-            <h1 class="text-base sm:text-lg font-semibold text-gray-800 flex-1 truncate"><?= esc($title ?? 'Panel') ?></h1>
+            <h1 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 flex-1 truncate"><?= esc($title ?? 'Panel') ?></h1>
 
-            <div class="flex items-center gap-2 sm:gap-3 text-sm text-gray-600 flex-shrink-0">
-                <span class="hidden sm:inline">Hola, <strong><?= esc(session()->get('user_name')) ?></strong></span>
-                <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-medium">
-                    <?= esc(session()->get('user_role')) ?>
-                </span>
+            <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                <!-- Dark mode toggle -->
+                <button onclick="toggleTheme()" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" title="Cambiar tema">
+                    <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+
+                <div class="text-sm text-gray-600 dark:text-gray-300">
+                    <span class="hidden sm:inline">Hola, <strong><?= esc(session()->get('user_name')) ?></strong></span>
+                    <span class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs font-medium ml-2">
+                        <?= esc(session()->get('user_role')) ?>
+                    </span>
+                </div>
             </div>
         </header>
 
@@ -97,17 +119,17 @@
         <?php if (session()->getFlashdata('success') || session()->getFlashdata('error') || session()->getFlashdata('errors')): ?>
             <div class="px-4 sm:px-6 pt-4">
                 <?php if (session()->getFlashdata('success')): ?>
-                    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-2 text-sm">
+                    <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-300 px-4 py-3 rounded-lg mb-2 text-sm">
                         <?= esc(session()->getFlashdata('success')) ?>
                     </div>
                 <?php endif; ?>
                 <?php if (session()->getFlashdata('error')): ?>
-                    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-2 text-sm">
+                    <div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-2 text-sm">
                         <?= esc(session()->getFlashdata('error')) ?>
                     </div>
                 <?php endif; ?>
                 <?php if (session()->getFlashdata('errors')): ?>
-                    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-2 text-sm">
+                    <div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg mb-2 text-sm">
                         <ul class="list-disc list-inside space-y-1">
                             <?php foreach (session()->getFlashdata('errors') as $err): ?>
                                 <li><?= esc($err) ?></li>
@@ -136,6 +158,10 @@ function closeSidebar() {
     document.getElementById('sidebar').classList.add('-translate-x-full');
     document.getElementById('sidebar-overlay').classList.add('hidden');
     document.body.classList.remove('overflow-hidden');
+}
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 </script>
 

@@ -2,16 +2,16 @@
 
 <?= $this->section('content') ?>
 
-<h1 class="text-2xl font-bold text-gray-800 mb-6">Tu Carrito</h1>
+<h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Tu Carrito</h1>
 
 <?php if (empty($items)): ?>
     <!-- Carrito vacío -->
-    <div class="bg-white rounded-xl shadow-sm border p-12 text-center">
-        <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-12 text-center">
+        <svg class="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
-        <p class="text-gray-500 text-lg mb-6">Tu carrito está vacío</p>
+        <p class="text-gray-500 dark:text-gray-400 text-lg mb-6">Tu carrito está vacío</p>
         <a href="/products" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition">
             Ver productos
         </a>
@@ -26,13 +26,13 @@
             $productData = json_decode($item->product_data ?? '{}', true);
             $image = $productData['image'] ?? null;
         ?>
-        <div class="bg-white rounded-xl shadow-sm border p-4 flex gap-4 items-start" id="item-<?= $item->id ?>">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 flex gap-4 items-start" id="item-<?= $item->id ?>">
             <!-- Imagen -->
-            <div class="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+            <div class="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg flex-shrink-0 overflow-hidden">
                 <?php if ($image && !empty($image['path'])): ?>
                     <img src="/<?= esc($image['path']) ?>" alt="<?= esc($item->name) ?>" class="w-full h-full object-cover">
                 <?php else: ?>
-                    <div class="w-full h-full flex items-center justify-center text-gray-300">
+                    <div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -44,29 +44,29 @@
             <!-- Datos -->
             <div class="flex-1">
                 <a href="/products/<?= esc($productData['slug'] ?? $item->slug) ?>"
-                   class="font-medium text-gray-800 hover:text-indigo-600"><?= esc($item->name) ?></a>
-                <p class="text-sm text-gray-500">SKU: <?= esc($productData['sku'] ?? '') ?></p>
+                   class="font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"><?= esc($item->name) ?></a>
+                <p class="text-sm text-gray-500 dark:text-gray-400">SKU: <?= esc($productData['sku'] ?? '') ?></p>
 
                 <div class="flex items-center justify-between mt-3">
                     <!-- Cantidad -->
-                    <div class="flex items-center border rounded-lg" data-item-id="<?= $item->id ?>">
-                        <button type="button" class="qty-btn px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-l-lg"
+                    <div class="flex items-center border dark:border-gray-600 rounded-lg" data-item-id="<?= $item->id ?>">
+                        <button type="button" class="qty-btn px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-l-lg"
                                 data-action="decrease" data-item="<?= $item->id ?>">−</button>
-                        <span class="w-10 text-center py-1.5 font-medium qty-display"><?= $item->quantity ?></span>
-                        <button type="button" class="qty-btn px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-r-lg"
+                        <span class="w-10 text-center py-1.5 font-medium text-gray-800 dark:text-gray-100 qty-display"><?= $item->quantity ?></span>
+                        <button type="button" class="qty-btn px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-r-lg"
                                 data-action="increase" data-item="<?= $item->id ?>">+</button>
                     </div>
 
                     <!-- Precio -->
                     <div class="text-right">
-                        <div class="font-bold text-gray-800 item-total" data-item="<?= $item->id ?>">
+                        <div class="font-bold text-gray-800 dark:text-gray-100 item-total" data-item="<?= $item->id ?>">
                             $<?= number_format($item->total_price, 0, ',', '.') ?>
                         </div>
-                        <div class="text-xs text-gray-400">$<?= number_format($item->unit_price, 0, ',', '.') ?> c/u</div>
+                        <div class="text-xs text-gray-400 dark:text-gray-500">$<?= number_format($item->unit_price, 0, ',', '.') ?> c/u</div>
                     </div>
 
                     <!-- Eliminar -->
-                    <button type="button" class="ml-4 text-red-400 hover:text-red-600 remove-btn"
+                    <button type="button" class="ml-4 text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 remove-btn"
                             data-item="<?= $item->id ?>" title="Eliminar">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -77,7 +77,7 @@
         </div>
         <?php endforeach; ?>
 
-        <a href="/products" class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 mt-2">
+        <a href="/products" class="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 mt-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
@@ -89,12 +89,12 @@
     <div class="space-y-4">
 
         <!-- Cupón -->
-        <div class="bg-white rounded-xl shadow-sm border p-4">
-            <h3 class="font-semibold text-gray-700 mb-3">Código de cupón</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-3">Código de cupón</h3>
             <div id="coupon-msg" class="hidden text-sm mb-2 rounded-lg p-2"></div>
             <div class="flex gap-2">
                 <input type="text" id="coupon-code" placeholder="INGRESA TU CÓDIGO"
-                       class="flex-1 border rounded-lg px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                       class="flex-1 border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-indigo-300"
                        value="<?= $cart->coupon_id ? '' : '' ?>">
                 <button type="button" id="apply-coupon"
                         class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
@@ -102,36 +102,36 @@
                 </button>
             </div>
             <?php if ($cart->coupon_id): ?>
-                <div class="mt-2 flex items-center justify-between bg-green-50 px-3 py-1.5 rounded-lg">
-                    <span class="text-green-700 text-sm font-medium">Cupón aplicado</span>
-                    <button type="button" id="remove-coupon" class="text-red-500 text-xs hover:text-red-700">Quitar</button>
+                <div class="mt-2 flex items-center justify-between bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-lg">
+                    <span class="text-green-700 dark:text-green-400 text-sm font-medium">Cupón aplicado</span>
+                    <button type="button" id="remove-coupon" class="text-red-500 dark:text-red-400 text-xs hover:text-red-700 dark:hover:text-red-300">Quitar</button>
                 </div>
             <?php endif; ?>
         </div>
 
         <!-- Totales -->
-        <div class="bg-white rounded-xl shadow-sm border p-4">
-            <h3 class="font-semibold text-gray-700 mb-3">Resumen del pedido</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-3">Resumen del pedido</h3>
 
             <div class="space-y-2 text-sm">
-                <div class="flex justify-between text-gray-600">
+                <div class="flex justify-between text-gray-600 dark:text-gray-300">
                     <span>Subtotal (<?= $cart->items_count ?> productos)</span>
                     <span id="cart-subtotal">$<?= number_format($cart->subtotal ?? 0, 0, ',', '.') ?></span>
                 </div>
 
                 <?php if ($cart->discount > 0): ?>
-                <div class="flex justify-between text-green-600" id="discount-row">
+                <div class="flex justify-between text-green-600 dark:text-green-400" id="discount-row">
                     <span>Descuento cupón</span>
                     <span id="cart-discount">−$<?= number_format($cart->discount, 0, ',', '.') ?></span>
                 </div>
                 <?php endif; ?>
 
-                <div class="flex justify-between text-gray-500 text-xs">
+                <div class="flex justify-between text-gray-500 dark:text-gray-400 text-xs">
                     <span>Envío</span>
-                    <span class="text-indigo-600">Se calcula en el checkout</span>
+                    <span class="text-indigo-600 dark:text-indigo-400">Se calcula en el checkout</span>
                 </div>
 
-                <div class="border-t pt-2 flex justify-between font-bold text-gray-800 text-base">
+                <div class="border-t dark:border-gray-700 pt-2 flex justify-between font-bold text-gray-800 dark:text-gray-100 text-base">
                     <span>Total</span>
                     <span id="cart-total">$<?= number_format(($cart->total ?? 0) - ($cart->discount ?? 0), 0, ',', '.') ?></span>
                 </div>
@@ -142,7 +142,7 @@
                 Proceder al pago
             </a>
 
-            <div class="mt-3 text-center text-xs text-gray-400">
+            <div class="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
                 Envío gratis en compras mayores a $150.000
             </div>
         </div>
@@ -199,7 +199,6 @@ document.querySelectorAll('.qty-btn').forEach(btn => {
                     document.getElementById('item-' + itemId)?.remove();
                 } else {
                     display.textContent = qty;
-                    // update item total from server response
                 }
                 updateCartBadge(data.items_count);
                 if (data.items_count <= 0) location.reload();
@@ -238,11 +237,11 @@ document.getElementById('apply-coupon')?.addEventListener('click', () => {
             const msg = document.getElementById('coupon-msg');
             msg.classList.remove('hidden');
             if (data.success) {
-                msg.className = 'text-sm mb-2 rounded-lg p-2 bg-green-50 text-green-700';
+                msg.className = 'text-sm mb-2 rounded-lg p-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400';
                 msg.textContent = data.message;
                 setTimeout(() => location.reload(), 1500);
             } else {
-                msg.className = 'text-sm mb-2 rounded-lg p-2 bg-red-50 text-red-700';
+                msg.className = 'text-sm mb-2 rounded-lg p-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400';
                 msg.textContent = data.message;
             }
         });
