@@ -1,29 +1,71 @@
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 
-<!-- Filtros de período -->
-<div class="flex flex-wrap items-center gap-3 mb-6">
-    <div class="flex bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg overflow-hidden text-sm shadow-sm">
+<!-- Filtros de período + toggle de modo -->
+<div class="flex flex-wrap items-center gap-3 mb-4">
+    <!-- Períodos -->
+    <div class="flex bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl overflow-hidden text-sm shadow-sm">
         <?php foreach (['week' => '7 días', 'month' => 'Este mes', 'year' => 'Este año', 'custom' => 'Personalizado'] as $p => $label): ?>
-            <a href="?period=<?= $p ?>"
+            <a href="?period=<?= $p ?>&mode=<?= esc($mode) ?>"
                class="px-3 py-2 <?= $period === $p ? 'brand-bg text-white font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' ?>">
                 <?= $label ?>
             </a>
         <?php endforeach; ?>
     </div>
 
+    <!-- Toggle: Solo pagados / Todos los estados -->
+    <div class="flex bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl overflow-hidden text-sm shadow-sm">
+        <a href="?period=<?= esc($period) ?>&mode=paid<?= $period === 'custom' ? '&date_from='.esc($dateFrom).'&date_to='.esc($dateTo) : '' ?>"
+           class="flex items-center gap-1.5 px-3 py-2 <?= $mode === 'paid' ? 'bg-emerald-600 text-white font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' ?>">
+            <i class="bi bi-check-circle text-xs"></i> Solo pagados
+        </a>
+        <a href="?period=<?= esc($period) ?>&mode=all<?= $period === 'custom' ? '&date_from='.esc($dateFrom).'&date_to='.esc($dateTo) : '' ?>"
+           class="flex items-center gap-1.5 px-3 py-2 <?= $mode === 'all' ? 'bg-blue-600 text-white font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' ?>">
+            <i class="bi bi-funnel text-xs"></i> Todos los estados
+        </a>
+    </div>
+
     <?php if ($period === 'custom'): ?>
     <form method="get" class="flex items-center gap-2">
         <input type="hidden" name="period" value="custom">
+        <input type="hidden" name="mode"   value="<?= esc($mode) ?>">
         <input type="date" name="date_from" value="<?= esc($dateFrom) ?>"
-               class="text-sm border dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+               class="text-sm border dark:border-gray-600 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
         <span class="text-gray-400">→</span>
         <input type="date" name="date_to" value="<?= esc($dateTo) ?>"
-               class="text-sm border dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
-        <button type="submit" class="brand-bg text-white px-4 py-2 rounded-lg text-sm font-medium">Aplicar</button>
+               class="text-sm border dark:border-gray-600 rounded-xl px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+        <button type="submit" class="brand-bg text-white px-4 py-2 rounded-xl text-sm font-medium">Aplicar</button>
     </form>
     <?php endif; ?>
 </div>
+
+<?php
+// Aviso: hay pedidos pendientes pero el modo es 'paid' y no se ven datos
+$noDataInPaidMode = $mode === 'paid'
+    && empty($topByRevenue)
+    && $pendingCount > 0;
+?>
+<?php if ($noDataInPaidMode): ?>
+<div class="mb-5 flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-3 text-sm">
+    <i class="bi bi-exclamation-triangle text-amber-500 dark:text-amber-400 text-base flex-shrink-0 mt-0.5"></i>
+    <div>
+        <p class="font-semibold text-amber-800 dark:text-amber-300">
+            Hay <?= $pendingCount ?> pedido<?= $pendingCount > 1 ? 's' : '' ?> pendiente<?= $pendingCount > 1 ? 's' : '' ?> de pago en este período.
+        </p>
+        <p class="text-amber-700 dark:text-amber-400 mt-0.5">
+            El modo <strong>Solo pagados</strong> sólo cuenta pedidos con pago confirmado.
+            En entornos sandbox (PayU/MercadoPago) el webhook no se dispara automáticamente.
+            Cambia a <a href="?period=<?= esc($period) ?>&mode=all" class="underline font-medium">Todos los estados</a> para ver los datos.
+        </p>
+    </div>
+</div>
+<?php elseif ($mode === 'all'): ?>
+<div class="mb-5 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl px-4 py-2.5 text-xs text-blue-700 dark:text-blue-300">
+    <i class="bi bi-info-circle text-sm flex-shrink-0"></i>
+    Mostrando todos los pedidos excepto fallidos y reembolsados. Cambia a
+    <a href="?period=<?= esc($period) ?>&mode=paid" class="underline font-medium ml-0.5">Solo pagados</a> para ver únicamente ingresos confirmados.
+</div>
+<?php endif; ?>
 
 <!-- KPIs de productos -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -53,7 +95,9 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b dark:border-gray-700 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Top 10 por ingresos</h2>
-            <span class="text-xs text-gray-400">Pedidos pagados</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium <?= $mode === 'all' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' ?>">
+                <?= $mode === 'all' ? 'Todos los estados' : 'Solo pagados' ?>
+            </span>
         </div>
         <?php if (empty($topByRevenue)): ?>
             <p class="text-sm text-gray-400 text-center py-10">Sin ventas en este período.</p>
@@ -93,7 +137,9 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b dark:border-gray-700 flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-200">Top 10 por unidades</h2>
-            <span class="text-xs text-gray-400">Pedidos pagados</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium <?= $mode === 'all' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' ?>">
+                <?= $mode === 'all' ? 'Todos los estados' : 'Solo pagados' ?>
+            </span>
         </div>
         <?php if (empty($topByQty)): ?>
             <p class="text-sm text-gray-400 text-center py-10">Sin ventas en este período.</p>

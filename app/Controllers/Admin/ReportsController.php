@@ -116,8 +116,26 @@ class ReportsController extends BaseController
         $period   = $this->request->getGet('period') ?? 'month';
         $dateFrom = $this->request->getGet('date_from');
         $dateTo   = $this->request->getGet('date_to');
+        // 'paid' = sólo pedidos con pago confirmado (producción)
+        // 'all'  = todos excepto fallidos/reembolsados (útil en sandbox/desarrollo)
+        $mode     = $this->request->getGet('mode') ?? 'paid';
 
         [$startDate, $endDate] = $this->resolvePeriod($period, $dateFrom, $dateTo);
+
+        // Condición de pago según modo
+        $paymentCond = $mode === 'all'
+            ? "o.payment_status NOT IN ('failed', 'refunded')"
+            : "o.payment_status = 'paid'";
+
+        // Cuántos pedidos hay en el período con estado pendiente
+        // (para mostrar aviso cuando el modo 'paid' da vacío)
+        $pendingCount = (int) $this->db->query("
+            SELECT COUNT(*) as cnt
+            FROM orders o
+            WHERE o.deleted_at IS NULL
+              AND o.payment_status = 'pending'
+              AND o.created_at >= ? AND o.created_at <= ?
+        ", [$startDate, $endDate])->getRowObject()->cnt;
 
         // Top 10 productos por ingresos
         $topByRevenue = $this->db->query("
@@ -130,7 +148,7 @@ class ReportsController extends BaseController
                 COUNT(DISTINCT oi.order_id) as order_count,
                 AVG(oi.unit_price) as avg_price
             FROM order_items oi
-            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND o.payment_status = 'paid'
+            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND {$paymentCond}
             WHERE o.created_at >= ? AND o.created_at <= ?
             GROUP BY oi.product_id, oi.name, oi.sku
             ORDER BY total_revenue DESC
@@ -146,7 +164,7 @@ class ReportsController extends BaseController
                 SUM(oi.quantity) as total_qty,
                 SUM(oi.total_price) as total_revenue
             FROM order_items oi
-            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND o.payment_status = 'paid'
+            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND {$paymentCond}
             WHERE o.created_at >= ? AND o.created_at <= ?
             GROUP BY oi.product_id, oi.name, oi.sku
             ORDER BY total_qty DESC
@@ -162,7 +180,7 @@ class ReportsController extends BaseController
                 SUM(oi.quantity) as units_sold,
                 COUNT(DISTINCT oi.product_id) as products_count
             FROM order_items oi
-            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND o.payment_status = 'paid'
+            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND {$paymentCond}
             JOIN products p ON p.id = oi.product_id AND p.deleted_at IS NULL
             JOIN categories c ON c.id = p.category_id AND c.deleted_at IS NULL
             WHERE o.created_at >= ? AND o.created_at <= ?
@@ -180,7 +198,7 @@ class ReportsController extends BaseController
               AND p.id NOT IN (
                   SELECT DISTINCT oi.product_id
                   FROM order_items oi
-                  JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND o.payment_status = 'paid'
+                  JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND {$paymentCond}
                   WHERE o.created_at >= ? AND o.created_at <= ?
               )
             ORDER BY p.name ASC
@@ -210,13 +228,15 @@ class ReportsController extends BaseController
                 SUM(oi.quantity) as units_sold,
                 SUM(oi.total_price) as gross_revenue
             FROM order_items oi
-            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND o.payment_status = 'paid'
+            JOIN orders o ON o.id = oi.order_id AND o.deleted_at IS NULL AND {$paymentCond}
             WHERE o.created_at >= ? AND o.created_at <= ?
         ", [$startDate, $endDate])->getRowObject();
 
         return view('admin/reports/products', [
             'title'        => 'Reporte de Productos',
             'period'       => $period,
+            'mode'         => $mode,
+            'pendingCount' => $pendingCount,
             'dateFrom'     => $dateFrom ?? date('Y-m-d', strtotime($startDate)),
             'dateTo'       => $dateTo   ?? date('Y-m-d', strtotime($endDate)),
             'topByRevenue' => $topByRevenue,
