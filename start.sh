@@ -70,18 +70,25 @@ mercadopago.accessToken = '${MP_ACCESS_TOKEN:-}'
 mercadopago.sandbox = true
 EOF
 
-echo "==> Esperando que la base de datos este disponible..."
-until php -r "
-  \$c = @new mysqli(
-    '${MYSQLHOST:-localhost}',
-    '${MYSQLUSER:-root}',
-    '${MYSQLPASSWORD:-}',
-    '${MYSQLDATABASE:-ecommerce_db}',
-    ${MYSQLPORT:-3306}
-  );
+DB_HOST="${MYSQLHOST:-tramway.proxy.rlwy.net}"
+DB_PORT="${MYSQLPORT:-45533}"
+DB_USER="${MYSQLUSER:-root}"
+DB_PASS="${MYSQLPASSWORD:-BlHXvVpqdOhZIWGkGbMEQtrPcHNcYJUP}"
+DB_NAME="${MYSQLDATABASE:-ecommerce_db}"
+
+echo "==> Esperando que la base de datos este disponible en ${DB_HOST}:${DB_PORT}..."
+MAX_RETRIES=20
+RETRIES=0
+until php -d error_reporting=0 -r "
+  \$c = @new mysqli('${DB_HOST}', '${DB_USER}', '${DB_PASS}', '${DB_NAME}', ${DB_PORT});
   exit(\$c->connect_error ? 1 : 0);
-"; do
-  echo "   BD no disponible todavia, reintentando en 3s..."
+" 2>/dev/null; do
+  RETRIES=$((RETRIES + 1))
+  if [ "$RETRIES" -ge "$MAX_RETRIES" ]; then
+    echo "   ERROR: No se pudo conectar a la BD tras ${MAX_RETRIES} intentos. Abortando."
+    exit 1
+  fi
+  echo "   BD no disponible todavia (intento ${RETRIES}/${MAX_RETRIES}), reintentando en 3s..."
   sleep 3
 done
 echo "   BD disponible."
