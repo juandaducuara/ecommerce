@@ -96,5 +96,11 @@ echo "   BD disponible."
 echo "==> Ejecutando migraciones..."
 php spark migrate --all
 
+if [ "${RUN_SEEDS:-false}" = "true" ]; then
+  echo "==> Poblando datos de prueba (seeds)..."
+  php spark db:seed DatabaseSeeder
+  echo "   Seeds ejecutados."
+fi
+
 echo "==> Iniciando servidor PHP en puerto ${PORT:-8080}..."
 exec php -S "0.0.0.0:${PORT:-8080}" -t public/ public/index.php
