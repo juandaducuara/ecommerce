@@ -139,10 +139,7 @@ class ProductController extends BaseController
             'track_inventory'     => 1,
         ]);
 
-        // Subir imágenes
-        $this->handleImageUpload($productId);
-
-        return redirect()->to('/admin/products')->with('success', 'Producto creado exitosamente.');
+        return redirect()->to('/admin/products/' . $productId . '/edit')->with('success', 'Producto creado. Ahora puedes subir imágenes.');
     }
 
     public function edit(int $id)
@@ -236,9 +233,6 @@ class ProductController extends BaseController
             $this->stockModel->insert($stockData);
         }
 
-        // Subir nuevas imágenes
-        $this->handleImageUpload($id);
-
         return redirect()->to('/admin/products')->with('success', 'Producto actualizado exitosamente.');
     }
 
@@ -255,34 +249,28 @@ class ProductController extends BaseController
         return redirect()->to('/admin/products')->with('success', 'Producto eliminado exitosamente.');
     }
 
-    public function deleteImage(int $productId, int $imageId)
+    public function uploadImages(int $productId)
     {
-        $image = $this->imageModel->find($imageId);
+        $product = $this->productModel->find($productId);
 
-        if (!$image || (int) $image->product_id !== $productId) {
-            return redirect()->back()->with('error', 'Imagen no encontrada.');
+        if (!$product) {
+            return $this->response->setStatusCode(404)->setJSON([
+                'error' => 'Producto no encontrado.',
+                'csrf'  => $this->csrfData(),
+            ]);
         }
 
-        // Eliminar archivo físico
-        $filePath = FCPATH . $image->path;
-        if (is_file($filePath)) {
-            unlink($filePath);
-        }
-
-        $this->imageModel->delete($imageId);
-
-        return redirect()->back()->with('success', 'Imagen eliminada.');
-    }
-
-    protected function handleImageUpload(int $productId): void
-    {
         $files = $this->request->getFileMultiple('images');
 
         if (!$files || !$files[0]->isValid()) {
-            return;
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => 'No se recibieron imágenes válidas.',
+                'csrf'  => $this->csrfData(),
+            ]);
         }
 
         $existingCount = $this->imageModel->where('product_id', $productId)->countAllResults();
+        $uploaded = [];
 
         foreach ($files as $i => $file) {
             if (!$file->isValid() || $file->hasMoved()) {
@@ -292,13 +280,59 @@ class ProductController extends BaseController
             $newName = $file->getRandomName();
             $file->move(FCPATH . 'uploads/products', $newName);
 
-            $this->imageModel->insert([
+            $path      = 'uploads/products/' . $newName;
+            $isPrimary = ($existingCount === 0 && $i === 0) ? 1 : 0;
+
+            $imageId = $this->imageModel->insert([
                 'product_id' => (int) $productId,
-                'path'       => 'uploads/products/' . $newName,
-                'alt_text'   => $this->request->getPost('name'),
+                'path'       => $path,
+                'alt_text'   => $product->name,
                 'position'   => (int) ($existingCount + $i),
-                'is_primary' => (int) ($existingCount === 0 && $i === 0 ? 1 : 0),
+                'is_primary' => $isPrimary,
+            ]);
+
+            $uploaded[] = [
+                'id'         => $imageId,
+                'path'       => '/' . $path,
+                'is_primary' => $isPrimary,
+            ];
+
+            $existingCount++;
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'images'  => $uploaded,
+            'csrf'    => $this->csrfData(),
+        ]);
+    }
+
+    public function deleteImage(int $productId, int $imageId)
+    {
+        $image = $this->imageModel->find($imageId);
+
+        if (!$image || (int) $image->product_id !== $productId) {
+            return $this->response->setStatusCode(404)->setJSON([
+                'error' => 'Imagen no encontrada.',
+                'csrf'  => $this->csrfData(),
             ]);
         }
+
+        $filePath = FCPATH . $image->path;
+        if (is_file($filePath)) {
+            unlink($filePath);
+        }
+
+        $this->imageModel->delete($imageId);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'csrf'    => $this->csrfData(),
+        ]);
+    }
+
+    private function csrfData(): array
+    {
+        return ['name' => csrf_token(), 'value' => csrf_hash()];
     }
 }

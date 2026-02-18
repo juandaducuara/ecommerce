@@ -93,37 +93,6 @@
             </div>
         </div>
 
-        <!-- Imágenes -->
-        <div class="bg-white rounded-xl shadow-sm border p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Imágenes</h2>
-
-            <?php if (!empty($images)): ?>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <?php foreach ($images as $img): ?>
-                        <div class="relative group border rounded-lg overflow-hidden">
-                            <img src="/<?= esc($img->path) ?>" alt="<?= esc($img->alt_text) ?>"
-                                class="w-full h-32 object-cover">
-                            <?php if ($img->is_primary): ?>
-                                <span class="absolute top-1 left-1 bg-indigo-600 text-white text-xs px-1.5 py-0.5 rounded">Principal</span>
-                            <?php endif; ?>
-                            <form action="/admin/products/<?= $product->id ?>/images/<?= $img->id ?>/delete" method="POST"
-                                class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition"
-                                onsubmit="return confirm('¿Eliminar esta imagen?')">
-                                <?= csrf_field() ?>
-                                <button type="submit" class="bg-red-600 text-white text-xs px-1.5 py-0.5 rounded hover:bg-red-700">X</button>
-                            </form>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Subir imágenes</label>
-                <input type="file" name="images[]" multiple accept="image/*"
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="text-xs text-gray-500 mt-1">PNG, JPG o WebP. La primera imagen será la principal.</p>
-            </div>
-        </div>
     </div>
 
     <!-- Sidebar -->

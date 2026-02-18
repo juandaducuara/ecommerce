@@ -67,6 +67,7 @@ $routes->group('admin', ['filter' => 'role:super-admin,admin'], static function 
     $routes->get('products/(:num)/edit', 'Admin\ProductController::edit/$1');
     $routes->post('products/(:num)', 'Admin\ProductController::update/$1');
     $routes->post('products/(:num)/delete', 'Admin\ProductController::delete/$1');
+    $routes->post('products/(:num)/images/upload', 'Admin\ProductController::uploadImages/$1');
     $routes->post('products/(:num)/images/(:num)/delete', 'Admin\ProductController::deleteImage/$1/$2');
 
     // Pedidos

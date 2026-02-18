@@ -7,7 +7,7 @@
     <h1 class="text-2xl font-bold text-gray-800">Crear Producto</h1>
 </div>
 
-<form action="/admin/products" method="POST" enctype="multipart/form-data">
+<form action="/admin/products" method="POST">
     <?= csrf_field() ?>
 
     <?php
