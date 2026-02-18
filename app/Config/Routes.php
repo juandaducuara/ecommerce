@@ -70,6 +70,12 @@ $routes->group('admin', ['filter' => 'role:super-admin,admin'], static function 
     $routes->post('products/(:num)/images/upload', 'Admin\ProductController::uploadImages/$1');
     $routes->post('products/(:num)/images/(:num)/delete', 'Admin\ProductController::deleteImage/$1/$2');
 
+    // Configuración de la tienda
+    $routes->get('settings', 'Admin\SettingsController::index');
+    $routes->post('settings', 'Admin\SettingsController::update');
+    $routes->post('settings/logo', 'Admin\SettingsController::uploadLogo');
+    $routes->post('settings/logo/delete', 'Admin\SettingsController::deleteLogo');
+
     // Pedidos
     $routes->get('orders', 'Admin\OrderController::index');
     $routes->get('orders/(:num)', 'Admin\OrderController::show/$1');

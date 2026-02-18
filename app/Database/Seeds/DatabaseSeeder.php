@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call('ShippingZoneSeeder');
         $this->call('SettingsSeeder');
         $this->call('ProductSeeder');
+        $this->call('SettingsSeeder');
     }
 }

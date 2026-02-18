@@ -13,17 +13,17 @@ class SettingModel extends Model
     protected $protectFields    = true;
 
     protected $allowedFields = [
-        'group',
-        'key',
+        'setting_group',
+        'setting_key',
         'value',
         'type',
         'description',
         'is_public',
     ];
 
-    protected $useTimestamps = true;
-    protected $createdField  = false;
-    protected $updatedField  = 'updated_at';
+    // protected $useTimestamps = true;
+    // protected $createdField  = false;
+    // protected $updatedField  = 'updated_at';
 
     // Cache de configuraciones
     protected static array $cache = [];
@@ -37,10 +37,10 @@ class SettingModel extends Model
             return self::$cache[$cacheKey];
         }
 
-        $builder = $this->where('key', $key);
+        $builder = $this->where('setting_key', $key);
 
         if ($group) {
-            $builder->where('group', $group);
+            $builder->where('setting_group', $group);
         }
 
         $setting = $builder->first();
@@ -58,14 +58,14 @@ class SettingModel extends Model
     // Establecer valor
     public function setValue(string $key, $value, ?string $group = 'general'): bool
     {
-        $existing = $this->where('key', $key)
-            ->where('group', $group)
+        $existing = $this->where('setting_key', $key)
+            ->where('setting_group', $group)
             ->first();
 
         $data = [
-            'group' => $group,
-            'key'   => $key,
-            'value' => is_array($value) ? json_encode($value) : $value,
+            'setting_group' => $group,
+            'setting_key'   => $key,
+            'value'         => is_array($value) ? json_encode($value) : $value,
         ];
 
         // Limpiar cache
@@ -82,11 +82,11 @@ class SettingModel extends Model
     // Obtener grupo completo
     public function getGroup(string $group): array
     {
-        $settings = $this->where('group', $group)->findAll();
+        $settings = $this->where('setting_group', $group)->findAll();
 
         $result = [];
         foreach ($settings as $setting) {
-            $result[$setting->key] = $this->castValue($setting->value, $setting->type);
+            $result[$setting->setting_key] = $this->castValue($setting->value, $setting->type);
         }
 
         return $result;
@@ -99,7 +99,7 @@ class SettingModel extends Model
 
         $result = [];
         foreach ($settings as $setting) {
-            $result[$setting->group][$setting->key] = $this->castValue($setting->value, $setting->type);
+            $result[$setting->setting_group][$setting->setting_key] = $this->castValue($setting->value, $setting->type);
         }
 
         return $result;
@@ -112,7 +112,7 @@ class SettingModel extends Model
 
         $result = [];
         foreach ($settings as $setting) {
-            $result[$setting->group][$setting->key] = [
+            $result[$setting->setting_group][$setting->setting_key] = [
                 'value'       => $this->castValue($setting->value, $setting->type),
                 'type'        => $setting->type,
                 'description' => $setting->description,

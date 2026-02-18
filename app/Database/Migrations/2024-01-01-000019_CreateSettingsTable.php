@@ -15,12 +15,12 @@ class CreateSettingsTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'group' => [
+            'setting_group' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 50,
                 'default'    => 'general',
             ],
-            'key' => [
+            'setting_key' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
             ],
@@ -50,7 +50,7 @@ class CreateSettingsTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addUniqueKey(['group', 'key']);
+        $this->forge->addUniqueKey(['setting_group', 'setting_key']);
 
         $this->forge->createTable('settings');
     }

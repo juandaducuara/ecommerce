@@ -2,12 +2,29 @@
 
 <?= $this->section('content') ?>
 
+<?php
+// Leer ajustes del hero (el SettingModel tiene caché interno)
+try {
+    $_hsm      = new \App\Infrastructure\Persistence\Models\SettingModel();
+    $_hg       = $_hsm->getGroup('general');
+    $_heroTitle = $_hg['hero_title']          ?? ('Bienvenido a ' . ($_hg['store_name'] ?? 'nuestra tienda'));
+    $_heroSub   = $_hg['hero_subtitle']       ?? 'Encuentra los mejores productos con envío a todo Colombia.';
+    $_brandCol  = $_hg['brand_primary_color'] ?? '#4f46e5';
+} catch (\Throwable $_he) {
+    $_heroTitle = 'Bienvenido a nuestra tienda';
+    $_heroSub   = 'Encuentra los mejores productos con envío a todo Colombia.';
+    $_brandCol  = '#4f46e5';
+}
+?>
+
 <!-- Hero -->
-<div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 md:p-12 mb-10 text-white">
-    <h1 class="text-3xl md:text-4xl font-bold mb-3">Bienvenido a Mi Tienda Online</h1>
-    <p class="text-indigo-100 mb-6 max-w-xl">Encuentra los mejores productos de tecnología con envío a todo Colombia.</p>
+<div class="rounded-2xl p-8 md:p-12 mb-10 text-white"
+     style="background: linear-gradient(135deg, <?= esc($_brandCol) ?>, #7c3aed)">
+    <h1 class="text-3xl md:text-4xl font-bold mb-3"><?= esc($_heroTitle) ?></h1>
+    <p class="mb-6 max-w-xl opacity-90"><?= esc($_heroSub) ?></p>
     <div class="flex gap-3">
-        <a href="/products" class="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-indigo-50 transition">
+        <a href="/products" class="bg-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition"
+           style="color: <?= esc($_brandCol) ?>">
             Ver productos
         </a>
     </div>

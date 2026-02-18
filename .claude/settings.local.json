@@ -5,7 +5,12 @@
       "Bash(for f in app/Views/admin/users/index.php app/Views/admin/users/create.php app/Views/admin/users/edit.php app/Views/admin/products/index.php app/Views/admin/products/create.php app/Views/admin/products/edit.php)",
       "Bash(do sed -i \"s|layouts/main|layouts/admin|g\" \"$f\")",
       "Bash(echo:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(mysql:*)",
+      "Bash(\"C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe\" -u root --password=\"\" ecommerce_db -e \"DESCRIBE settings;\")",
+      "Bash(\"C:/xampp/mysql/bin/mysql.exe\" -u root --password=\"\" ecommerce_db -e \"DESCRIBE settings;\")",
+      "Bash(\"C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysql.exe\" -u root --password=\"\" ecommerce_db -e \"DESCRIBE settings;\")",
+      "Bash(\"C:/laragon/bin/mysql/mysql-8.0.30-winx64/bin/mysql.exe\" -u root --password=\"\" ecommerce_db -e \"SELECT id, version, batch FROM migrations ORDER BY id DESC LIMIT 10;\")"
     ]
   }
 }
