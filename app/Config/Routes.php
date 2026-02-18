@@ -76,6 +76,12 @@ $routes->group('admin', ['filter' => 'role:super-admin,admin'], static function 
     $routes->post('settings/logo', 'Admin\SettingsController::uploadLogo');
     $routes->post('settings/logo/delete', 'Admin\SettingsController::deleteLogo');
 
+    // Reportes analíticos
+    $routes->get('reports/sales',     'Admin\ReportsController::sales');
+    $routes->get('reports/products',  'Admin\ReportsController::products');
+    $routes->get('reports/customers', 'Admin\ReportsController::customers');
+    $routes->get('reports/inventory', 'Admin\ReportsController::inventory');
+
     // Pedidos
     $routes->get('orders', 'Admin\OrderController::index');
     $routes->get('orders/(:num)', 'Admin\OrderController::show/$1');
