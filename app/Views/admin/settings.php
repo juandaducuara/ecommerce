@@ -5,6 +5,7 @@
 <?php
 $s  = $general ?? [];
 $sc = $social  ?? [];
+$sp = $payment ?? [];
 
 $storeName    = $s['store_name']          ?? 'Mi Tienda Online';
 $storeLogo    = $s['store_logo']          ?? '';
@@ -28,7 +29,8 @@ $heroSubtitle = $s['hero_subtitle']       ?? '';
         <button onclick="showTab('brand')"   id="tab-brand"   class="tab-btn whitespace-nowrap pb-3 border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400">Marca</button>
         <button onclick="showTab('hero')"    id="tab-hero"    class="tab-btn whitespace-nowrap pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700">Landing</button>
         <button onclick="showTab('contact')" id="tab-contact" class="tab-btn whitespace-nowrap pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700">Contacto</button>
-        <button onclick="showTab('social')"  id="tab-social"  class="tab-btn whitespace-nowrap pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700">Redes sociales</button>
+        <button onclick="showTab('social')"   id="tab-social"   class="tab-btn whitespace-nowrap pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700">Redes sociales</button>
+        <button onclick="showTab('payment')" id="tab-payment" class="tab-btn whitespace-nowrap pb-3 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700">Pagos</button>
     </nav>
 </div>
 
@@ -232,6 +234,108 @@ $heroSubtitle = $s['hero_subtitle']       ?? '';
         </div>
     </div><!-- /section-social -->
 
+    <!-- ===== TAB: PAGOS ===== -->
+    <div id="section-payment" class="tab-section hidden space-y-6">
+
+        <!-- PayU -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">PU</span>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-800 dark:text-gray-100">PayU</h2>
+                </div>
+                <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+                    <input type="checkbox" name="payu_sandbox" value="1"
+                        <?= !empty($sp['payu_sandbox']) ? 'checked' : '' ?>
+                        class="rounded border-gray-300 dark:border-gray-600 text-yellow-500">
+                    <span>Modo sandbox</span>
+                    <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs px-1.5 py-0.5 rounded">TEST</span>
+                </label>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Merchant ID</label>
+                    <input type="text" name="payu_merchant_id" value="<?= esc($sp['payu_merchant_id'] ?? '') ?>"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account ID</label>
+                    <input type="text" name="payu_account_id" value="<?= esc($sp['payu_account_id'] ?? '') ?>"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">API Login</label>
+                    <input type="text" name="payu_api_login" value="<?= esc($sp['payu_api_login'] ?? '') ?>"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">API Key</label>
+                    <div class="relative">
+                        <input type="password" name="payu_api_key" id="payu_api_key" value="<?= esc($sp['payu_api_key'] ?? '') ?>"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 pr-10 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" onclick="toggleSecret('payu_api_key')"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                            <i class="bi bi-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">
+                Obtén tus credenciales en <span class="font-mono">developers.payulatam.com</span>. En sandbox usa las credenciales de prueba de PayU.
+            </p>
+        </div>
+
+        <!-- MercadoPago -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-sky-500 flex items-center justify-center">
+                        <span class="text-white text-xs font-bold">MP</span>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-800 dark:text-gray-100">MercadoPago</h2>
+                </div>
+                <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+                    <input type="checkbox" name="mercadopago_sandbox" value="1"
+                        <?= !empty($sp['mercadopago_sandbox']) ? 'checked' : '' ?>
+                        class="rounded border-gray-300 dark:border-gray-600 text-yellow-500">
+                    <span>Modo sandbox</span>
+                    <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs px-1.5 py-0.5 rounded">TEST</span>
+                </label>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Public Key</label>
+                    <input type="text" name="mercadopago_public_key" value="<?= esc($sp['mercadopago_public_key'] ?? '') ?>"
+                        class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Clave pública (visible en el frontend).</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Access Token</label>
+                    <div class="relative">
+                        <input type="password" name="mercadopago_access_token" id="mp_access_token" value="<?= esc($sp['mercadopago_access_token'] ?? '') ?>"
+                            class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 pr-10 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" onclick="toggleSecret('mp_access_token')"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                            <i class="bi bi-eye text-sm"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Clave secreta — nunca la compartas.</p>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">
+                Obtén tus credenciales en <span class="font-mono">mercadopago.com/developers</span>. En sandbox usa las credenciales de la aplicación de prueba.
+            </p>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                Guardar pagos
+            </button>
+        </div>
+    </div><!-- /section-payment -->
+
 </form>
 
 <script>
@@ -285,6 +389,19 @@ document.querySelector('[name=hero_subtitle]')?.addEventListener('input', functi
     const el = document.getElementById('hp-sub');
     if (el) el.textContent = this.value || 'Subtítulo del hero';
 });
+
+// ---- Mostrar/ocultar campos secretos ----
+function toggleSecret(id) {
+    const input = document.getElementById(id);
+    const btn   = input.nextElementSibling.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.className = 'bi bi-eye-slash text-sm';
+    } else {
+        input.type = 'password';
+        btn.className = 'bi bi-eye text-sm';
+    }
+}
 
 // ---- Logo preview local ----
 function previewLogo(input) {

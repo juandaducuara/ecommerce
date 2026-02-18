@@ -81,7 +81,7 @@ class CatalogController extends BaseController
             $product->stock_available = $stock ? max(0, $stock->quantity - $stock->reserved) : 0;
         }
 
-        $categories = $this->categoryModel->getActive();
+        $categories = $this->categoryModel->getWithProductCount();
         $currentCategory = $categoryId ? $this->categoryModel->find($categoryId) : null;
 
         return view('web/products/index', [

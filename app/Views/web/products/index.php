@@ -35,10 +35,15 @@
                         Todas
                     </label>
                     <?php foreach ($categories as $cat): ?>
-                        <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                            <input type="radio" name="category" value="<?= $cat->id ?>"
-                                <?= ($categoryFilter ?? '') == $cat->id ? 'checked' : '' ?>>
-                            <?= esc($cat->name) ?>
+                        <label class="flex items-center justify-between gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+                            <span class="flex items-center gap-2">
+                                <input type="radio" name="category" value="<?= $cat->id ?>"
+                                    <?= ($categoryFilter ?? '') == $cat->id ? 'checked' : '' ?>>
+                                <?= esc($cat->name) ?>
+                            </span>
+                            <span class="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs px-1.5 py-0.5 rounded-full">
+                                <?= (int)$cat->product_count ?>
+                            </span>
                         </label>
                     <?php endforeach; ?>
                 </div>

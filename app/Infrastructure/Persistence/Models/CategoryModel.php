@@ -105,6 +105,27 @@ class CategoryModel extends Model
         return $tree;
     }
 
+    // Categorías con conteo de productos activos (solo las que tienen al menos uno)
+    public function getWithProductCount(bool $onlyWithProducts = true): array
+    {
+        $db = \Config\Database::connect();
+
+        $builder = $db->table('categories c')
+            ->select('c.*, COUNT(p.id) as product_count')
+            ->join('products p', 'p.category_id = c.id AND p.is_active = 1 AND p.deleted_at IS NULL', 'left')
+            ->where('c.is_active', 1)
+            ->where('c.deleted_at IS NULL')
+            ->groupBy('c.id')
+            ->orderBy('product_count', 'DESC')
+            ->orderBy('c.position', 'ASC');
+
+        if ($onlyWithProducts) {
+            $builder->having('product_count > 0');
+        }
+
+        return $builder->get()->getResultObject();
+    }
+
     // Contar productos en categoría
     public function getProductCount(int $categoryId): int
     {

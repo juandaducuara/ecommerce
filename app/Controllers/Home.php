@@ -41,8 +41,8 @@ class Home extends BaseController
             $product->stock_available = $stock ? max(0, $stock->quantity - $stock->reserved) : 0;
         }
 
-        // Categorías principales
-        $categories = $categoryModel->getMainCategories();
+        // Categorías con productos
+        $categories = $categoryModel->getWithProductCount();
 
         return view('web/home', [
             'title'      => 'Inicio',

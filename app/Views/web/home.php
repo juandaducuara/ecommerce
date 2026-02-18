@@ -50,11 +50,14 @@ try {
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <?php foreach ($categories as $cat): ?>
             <a href="/categories/<?= esc($cat->slug) ?>"
-                class="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 text-center hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 transition">
+                class="relative bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 text-center hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 transition">
                 <?php if ($cat->icon): ?>
                     <i class="bi <?= esc($cat->icon) ?> text-2xl text-indigo-500 dark:text-indigo-400 mb-2 block"></i>
                 <?php endif; ?>
                 <span class="text-sm font-medium text-gray-800 dark:text-gray-100"><?= esc($cat->name) ?></span>
+                <span class="absolute top-2 right-2 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-1.5 py-0.5 rounded-full leading-none">
+                    <?= (int)$cat->product_count ?>
+                </span>
             </a>
         <?php endforeach; ?>
     </div>

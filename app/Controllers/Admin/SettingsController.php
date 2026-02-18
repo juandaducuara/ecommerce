@@ -20,27 +20,22 @@ class SettingsController extends BaseController
 
         $general = $this->settings->getGroup('general');
         $social  = $this->settings->getGroup('social');
+        $payment = $this->settings->getGroup('payment');
 
         return view('admin/settings', [
             'title'   => 'Configuración de la tienda',
             'general' => $general,
             'social'  => $social,
+            'payment' => $payment,
         ]);
     }
 
     public function update()
     {
         $generalFields = [
-            'store_name',
-            'store_email',
-            'store_phone',
-            'store_address',
-            'brand_primary_color',
-            'tagline',
-            'hero_title',
-            'hero_subtitle',
+            'store_name', 'store_email', 'store_phone', 'store_address',
+            'brand_primary_color', 'tagline', 'hero_title', 'hero_subtitle',
         ];
-
         foreach ($generalFields as $key) {
             $value = $this->request->getPost($key);
             if ($value !== null) {
@@ -55,6 +50,21 @@ class SettingsController extends BaseController
                 $this->settings->setValue($key, trim($value), 'social');
             }
         }
+
+        $paymentFields = [
+            'payu_merchant_id', 'payu_api_key', 'payu_api_login', 'payu_account_id',
+            'mercadopago_public_key', 'mercadopago_access_token',
+        ];
+        foreach ($paymentFields as $key) {
+            $value = $this->request->getPost($key);
+            if ($value !== null) {
+                $this->settings->setValue($key, trim($value), 'payment');
+            }
+        }
+
+        // Checkboxes de sandbox (si no vienen en POST = false)
+        $this->settings->setValue('payu_sandbox',        $this->request->getPost('payu_sandbox')        ? '1' : '0', 'payment');
+        $this->settings->setValue('mercadopago_sandbox', $this->request->getPost('mercadopago_sandbox') ? '1' : '0', 'payment');
 
         SettingModel::clearCache();
 
