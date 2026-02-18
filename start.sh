@@ -12,7 +12,7 @@ CI_ENVIRONMENT = production
 #--------------------------------------------------------------------
 # APP
 #--------------------------------------------------------------------
-app.baseURL = '${APP_BASE_URL:-http://localhost:8080/}'
+app.baseURL = '${APP_BASE_URL:-https://ecommerce-production-904d.up.railway.app/}'
 app.indexPage = ''
 app.appTimezone = 'America/Bogota'
 
