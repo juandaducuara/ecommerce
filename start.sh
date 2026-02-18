@@ -21,13 +21,13 @@ app.appTimezone = 'America/Bogota'
 # Railway MySQL plugin provee: MYSQLHOST, MYSQLUSER, MYSQLPASSWORD,
 # MYSQLDATABASE, MYSQLPORT automaticamente.
 #--------------------------------------------------------------------
-database.default.hostname = ${MYSQLHOST:-localhost}
+database.default.hostname = ${MYSQLHOST:-tramway.proxy.rlwy.net}
 database.default.database = ${MYSQLDATABASE:-ecommerce_db}
 database.default.username = ${MYSQLUSER:-root}
-database.default.password = ${MYSQLPASSWORD:-}
+database.default.password = ${MYSQLPASSWORD:-BlHXvVpqdOhZIWGkGbMEQtrPcHNcYJUP }
 database.default.DBDriver = MySQLi
 database.default.DBPrefix =
-database.default.port = ${MYSQLPORT:-3306}
+database.default.port = ${MYSQLPORT:-45533}
 database.default.charset = utf8mb4
 database.default.DBCollat = utf8mb4_unicode_ci
 
