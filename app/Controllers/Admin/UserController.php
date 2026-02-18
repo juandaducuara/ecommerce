@@ -42,8 +42,10 @@ class UserController extends BaseController
             $builder->where('users.status', $statusFilter);
         }
 
-        $users = $builder->orderBy('users.created_at', 'DESC')->findAll();
-        $roles = $this->roleModel->findAll();
+        $perPage = 15;
+        $users   = $builder->orderBy('users.created_at', 'DESC')->paginate($perPage, 'default');
+        $pager   = $this->userModel->pager;
+        $roles   = $this->roleModel->findAll();
 
         return view('admin/users/index', [
             'title'        => 'Gestión de Usuarios',
@@ -52,6 +54,7 @@ class UserController extends BaseController
             'search'       => $search,
             'roleFilter'   => $roleFilter,
             'statusFilter' => $statusFilter,
+            'pager'        => $pager,
         ]);
     }
 

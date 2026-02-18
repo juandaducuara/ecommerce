@@ -49,7 +49,9 @@ class ProductController extends BaseController
             $builder->where('products.is_active', 0);
         }
 
-        $products = $builder->orderBy('products.created_at', 'DESC')->findAll();
+        $perPage  = 15;
+        $products = $builder->orderBy('products.created_at', 'DESC')->paginate($perPage, 'default');
+        $pager    = $this->productModel->pager;
 
         // Agregar stock a cada producto
         foreach ($products as $product) {
@@ -66,6 +68,7 @@ class ProductController extends BaseController
             'search'         => $search,
             'categoryFilter' => $categoryFilter,
             'statusFilter'   => $statusFilter,
+            'pager'          => $pager,
         ]);
     }
 

@@ -114,6 +114,8 @@
             <?php endif; ?>
         </tbody>
     </table>
+
+    <?= $pager->links('default', 'admin_pager') ?>
 </div>
 
 <?= $this->endSection() ?>

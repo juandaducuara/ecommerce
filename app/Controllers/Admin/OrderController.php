@@ -60,7 +60,9 @@ class OrderController extends BaseController
             $builder->where('orders.created_at <=', $dateTo . ' 23:59:59');
         }
 
-        $orders = $builder->orderBy('orders.created_at', 'DESC')->findAll();
+        $perPage = 15;
+        $orders  = $builder->orderBy('orders.created_at', 'DESC')->paginate($perPage, 'default');
+        $pager   = $this->orderModel->pager;
 
         // Estadísticas rápidas
         $stats = [
@@ -78,6 +80,7 @@ class OrderController extends BaseController
             'paymentFilter' => $paymentFilter,
             'dateFrom'      => $dateFrom,
             'dateTo'        => $dateTo,
+            'pager'         => $pager,
         ]);
     }
 
